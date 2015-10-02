@@ -17,20 +17,20 @@ def get_class(import_path=None):
     """
     from django.core.exceptions import ImproperlyConfigured
     if import_path is None:
-        raise ImproperlyConfigured('No class path specified.')
+        raise ImproperlyConfigured(u'No class path specified.')
     try:
         dot = import_path.rindex('.')
     except ValueError:
-        raise ImproperlyConfigured("%s isn't a module." % import_path)
+        raise ImproperlyConfigured(u"%s isn't a module." % import_path)
     module, classname = import_path[:dot], import_path[dot+1:]
     try:
         mod = import_module(module)
     except ImportError as e:
-        raise ImproperlyConfigured('Error importing module %s: "%s"' % (module, e))
+        raise ImproperlyConfigured(u'Error importing module %s: "%s"' % (module, e))
     try:
         return getattr(mod, classname)
     except AttributeError:
-        raise ImproperlyConfigured('Module "%s" does not define a "%s" class.' % (module, classname))
+        raise ImproperlyConfigured(u'Module "%s" does not define a "%s" class.' % (module, classname))
 
 
 server = get_class(settings.PRIVATE_MEDIA_SERVER)(**getattr(settings, 'PRIVATE_MEDIA_SERVER_OPTIONS', {}))
@@ -45,10 +45,10 @@ def serve_private_file(request, path):
     """
     Serve private files to users with read permission.
     """
-    logger.debug('Serving {0} to {1}'.format(path, request.user))
+    logger.debug(u'Serving {0} to {1}'.format(path, request.user))
     if not permissions.has_read_permission(request, path):
         if settings.DEBUG:
             raise PermissionDenied
         else:
-            raise Http404('File not found')
+            raise Http404(u'File not found')
     return server.serve(request, path=path)
